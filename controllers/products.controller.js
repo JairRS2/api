@@ -2,7 +2,7 @@
 const { poolAlmacen, poolProveedores }= require("../config/db");
 const sql = require("mssql");
 const moment = require("moment");
-const bcrypt = require('bcrypt'); // Para manejar contraseñas cifradas
+
 
 
 function isValidDate(date) {
