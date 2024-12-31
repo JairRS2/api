@@ -173,6 +173,9 @@ exports.habilitarProducto = async (req, res) => {
     res.status(500).json({ message: "Error al habilitar el producto" });
   }
 };
+// Obtener todos los proveedores
+// Obtener todos los proveedores
+// Obtener todos los proveedores
 
 
 // Obtener todos los proveedores
