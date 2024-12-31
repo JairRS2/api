@@ -37,7 +37,7 @@ exports.createProduct = async (req, res) => {
     }
 
     const query = `
-      INSERT INTO Productos(
+      INSERT INTO tbProducto(
         cCodPrd, cDesPrd, nUniPrd, nMinPrd, nMaxPrd, dAltPrd, dUltPrd,
         nLinPrd, nCosPrd, nPrePrd, nInvIPrd, nInvAPrd, nUltPrd,
         cPosPrd, cPtePrd, cPrv1Prd, cPrv2Prd
@@ -75,7 +75,7 @@ exports.updateProduct = async (req, res) => {
  
   try {
     const query = `
-      UPDATE Productos SET
+      UPDATE tbProducto SET
         cDesPrd = @cDesPrd,
         nUniPrd = @nUniPrd,
         nMinPrd = @nMinPrd,
@@ -125,20 +125,28 @@ exports.updateProduct = async (req, res) => {
 // Obtener todos los productos
 exports.getAllProducts = async (req, res) => {
   try {
-    const query = "SELECT * FROM Productos"; // Incluye habilitado en la selección
+    const query = "SELECT * FROM tbProducto"; // Consulta SQL para obtener todos los productos
+
     const result = await poolAlmacen.request().query(query);
 
-    // Asigna la ruta de la imagen para cada producto
+    
     result.recordset.forEach(product => {
-      product.imageUrl = `http://localhost:3000/images/${product.cDesPrd}.jpg`;
+      // Si solo tienes una imagen, sigue devolviendo un array
+      product.imageUrls = [
+        `http://localhost:3000/images/${product.cCodPrd}.jpg`,
+        `http://localhost:3000/images/${product.cCodPrd} (1).jpg`,
+        `http://localhost:3000/images/${product.cCodPrd} (2).jpg`,
+        `http://localhost:3000/images/${product.cCodPrd} (3).jpg`
+      ];
     });
 
     res.status(200).json(result.recordset);
   } catch (error) {
-    console.error("Error al obtener los productos:", error.message);  
+    console.error("Error al obtener los productos:", error.message);
     res.status(500).json({ message: "Error al obtener los productos" });
   }
 };
+
 
 
 // Deshabilitar producto
@@ -147,11 +155,11 @@ exports.deshabilitarProducto = async (req, res) => {
 
   try {
     
-    const query = "UPDATE Productos SET habilitado = 0 WHERE cCodPrd = @cCodPrd";
+    const query = "UPDATE tbProducto SET nEdoPrd = 0 WHERE cCodPrd = @cCodPrd";
     const request = poolAlmacen.request();
     request.input("cCodPrd", cCodPrd);
     await request.query(query);
-
+    
     res.status(200).json({ message: `Producto con código ${cCodPrd} deshabilitado.` });
   } catch (error) {
     console.error("Error al deshabilitar el producto:", error.message);
@@ -163,7 +171,7 @@ exports.deshabilitarProducto = async (req, res) => {
 exports.habilitarProducto = async (req, res) => {
   let { cCodPrd } = req.params;
   try {
-    const query = "UPDATE Productos SET habilitado = 1 WHERE cCodPrd = @cCodPrd";
+    const query = "UPDATE tbProducto SET nEdoPrd = 1 WHERE cCodPrd = @cCodPrd";
     const request = poolAlmacen.request();
     request.input("cCodPrd", cCodPrd);
     await request.query(query);
@@ -173,9 +181,6 @@ exports.habilitarProducto = async (req, res) => {
     res.status(500).json({ message: "Error al habilitar el producto" });
   }
 };
-// Obtener todos los proveedores
-// Obtener todos los proveedores
-// Obtener todos los proveedores
 
 
 // Obtener todos los proveedores
