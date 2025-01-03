@@ -1,9 +1,6 @@
-
 const { poolAlmacen, poolProveedores }= require("../config/db");
 const sql = require("mssql");
 const moment = require("moment");
-
-
 
 function isValidDate(date) {
   return moment(date, "YYYY-MM-DD", true).isValid();
@@ -47,7 +44,7 @@ exports.createProduct = async (req, res) => {
         @cPosPrd, @cPtePrd, @cPrv1Prd, @cPrv2Prd
       )
     `;
-
+             
     const request = poolAlmacen.request();
     setRequestInputs(request, {
       cCodPrd, cDesPrd, nUniPrd, nMinPrd, nMaxPrd, dAltPrd, dUltPrd,
